@@ -3,70 +3,70 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<script src="js/libs/jquery-1.10.2.min.js"></script>
-		<script src="js/libs/handlebars-v1.3.0.js"></script>
-		<script src="js/geolocation.js"></script>
-
+		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/geolocation.css">
 
 	</head>
-	<body class="container">
-		<h1 id="title">GeoLocation Test</h1>
-		<hr class="divider"></hr>
-		<section id="mainContent"> </section>
+	<body ng-app="GeoLocationApp">
 
-		<script type="text/x-handlebars" id="index">
-				<section id="geoLocationContainer" class="">
+		<header class="jumbotron">
+			<h1 id="title">GeoLocation Test</h1>
+		</header>
 
-				</section>
+		<main id="mainContent" class="container">
+
+			<section id="geoLocationContainer" class="row" ng-controller="UserLocationController">
+				<location-info info="userLocation" class="table-responsive" ng-cloak></location-info>
 				<menu>
-					<button onclick="getMyLocation()" id="btnMyLocation">My location</button>
-					<button onclick="resetLocationDetails()" id="btnResetLocation">Reset location</button>
+					<button ng-click="getMyLocation()" id="btnMyLocation" class="btn btn-lg btn-primary">My location</button>
+					<button ng-click="resetLocationDetails()" id="btnResetLocation" class="btn btn-lg btn-primary">Reset location</button>
 				</menu>
-		</script>
+			</section>
 
-		<script type="text/x-handlebars" id="locationInfo">
-			<h4>Estimated location</h4>
+			<hr class="divider"></hr>
 
-			<table align="center" class="empty">
-				<tbody>
-					<tr>
-						<td class="field_name">IP</td>
-						<td id="location_query" class="location_value">{{query}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-					<tr>
-						<td class="field_name">Country</td>
-						<td id="location_country" class="location_value">{{country}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-					<tr>
-						<td class="field_name">Region</td>
-						<td id="location_regionName" class="location_value">{{regionName}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-					<tr>
-						<td class="field_name">City</td>
-						<td id="location_city" class="location_value">{{city}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-					<tr>
-						<td class="field_name">Time Zone</td>
-						<td id="location_timezone" class="location_value">{{timezone}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-					<tr>
-						<td class="field_name">Latitude</td>
-						<td id="location_lat" class="location_value">{{lat}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-					<tr>
-						<td class="field_name">Longitude</td>
-						<td id="location_lon" class="location_value">{{lon}}</td>
-						<td><button class="help">?</button></td>
-					</tr>
-				</tbody>
-			</table>
-		</script>
+			<section id="webLocationContainer" class="row" ng-controller="WebLocationController">
+				<label for="host" class="">Website</label>
+				<menu>
+					<input type="text" id="host" class="input-lg" placeholder="www.example.com" ng-model="host" required pattern="^(www\.)?((\w)+\.){1,}((\w){2,4})$" />
+					<button ng-click="locate()" id="btnLocate" class="btn btn-lg btn-primary">Locate</button>
+				</menu>
+			</section>
+
+			<figure ng-controller="MapController">
+				<ui-gmap-google-map center='map.center' zoom='map.zoom' ng-if="map.show()">
+					<ui-gmap-marker ng-repeat="m in map.markers()" coords="m" icon="m.icon" click="onMarkerClicked(m)" idKey="m.id" options="m.options">
+						<ui-gmap-window ng-cloak  coords="m.coords" isIconVisibleOnClick="true" options="map.infoWindow.options">
+							<p>This is an {{ m.options.labelContent }} window at {{ m.latitude | number:4 }}, {{ m.longitude | number:4 }}!</p>
+						</ui-gmap-window>
+					</ui-gmap-marker>
+				</ui-gmap-google-map>
+			</figure>
+
+		</main>
+
+		<footer class="jumbotron">
+			<span>&copy; Attila Pix 2015</span>
+		</footer>
+
+		<!-- Libraries -->
+		<script src="js/libs/lodash.min.js"></script>
+		<script src="js/libs/angular.min.js"></script>
+		<script src="js/libs/angular-google-maps.min.js"></script>
+
+		<!-- Modules -->
+		<script src="js/app.js"></script>
+
+		<!-- Controllers -->
+		<script src="js/controllers/UserLocationController.js"></script>
+		<script src="js/controllers/WebLocationController.js"></script>
+		<script src="js/controllers/MapController.js"></script>
+
+		<!-- Services -->
+		<script src="js/services/locator.js"></script>
+
+		<!-- Directives -->
+		<script src="js/directives/locationInfo.js"></script>
+
 	</body>
 </html>
