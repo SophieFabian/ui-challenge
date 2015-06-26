@@ -1,9 +1,11 @@
-app.directive('locationInfo', function() { 
-	return { 
-		restrict: 'E', 
-		scope: { 
-			info: '=' 
-		}, 
-		templateUrl: 'js/directives/locationInfo.html' 
-	}; 
+'use strict';
+
+app.directive('locationInfo', function(){
+	return {
+		restrict: 'E',
+		scope: {
+			info: '='
+		},
+		templateUrl: 'js/directives/locationInfo.html'
+	};
 });

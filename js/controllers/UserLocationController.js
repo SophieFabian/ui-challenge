@@ -1,4 +1,6 @@
-app.controller('UserLocationController', ['$scope', 'locator', function($scope, locator) {
+'use strict';
+
+app.controller('UserLocationController', ['$scope', 'locator', function($scope, locator){
 
 	$scope.label = {
 			query: "IP",
@@ -12,22 +14,37 @@ app.controller('UserLocationController', ['$scope', 'locator', function($scope, 
 
 	$scope.order = ["query","country","regionName","city","timezone","lat","lon"];
 
-	$scope.getMyLocation = function getMyLocation(){
-		locator.fn("http://ip-api.com/json/").success(function(data){
-			$scope.userLocation.data = data;
-			$scope.userLocation.empty = false;
-			$scope.userLocation.help = $scope.help;
-			$scope.userLocation.label = $scope.label;
-			$scope.userLocation.order = $scope.order;
+	$scope.locationError = "";
+	$scope.locating = false;
 
-			locator.setUserLocation({
-				latitude:data.lat,
-				longitude:data.lon
+	$scope.getMyLocation = function(){
+		if($scope.locating) return;
+
+		$scope.locating = true;
+
+		locator.locate("http://ip-api.com/json/")
+			.then(function(result){
+				$scope.userLocation.data = result;
+				$scope.userLocation.empty = false;
+				$scope.userLocation.help = $scope.help;
+				$scope.userLocation.label = $scope.label;
+				$scope.userLocation.order = $scope.order;
+				$scope.locationError = "";
+
+				locator.setUserLocation({
+					latitude:result.lat,
+					longitude:result.lon
+				});
+				$scope.locating = false;
+
+			}, function(err){
+				$scope.resetLocationDetails();
+				$scope.locationError = err;
+				$scope.locating = false;
 			});
-		});
 	};
 
-	$scope.resetLocationDetails = function resetLocationDetails(){
+	$scope.resetLocationDetails = function(){
 		$scope.userLocation = {
 				data: {
 					query: "0.0.0.0",
@@ -44,10 +61,12 @@ app.controller('UserLocationController', ['$scope', 'locator', function($scope, 
 				order: $scope.order
 		};
 		locator.setUserLocation(undefined);
+		$scope.locationError = "";
+		$scope.locating = false;
 	};
 
 	$scope.help = function(fieldName){
-		alert("This is your " + fieldName + " from ISP " + $scope.userLocation.data.isp + " at " + new Date());
+		alert("This is your " + fieldName + " from ISP " + $scope.userLocation.data.isp + " at " + new Date().format());
 	};
 
 	$scope.resetLocationDetails();
