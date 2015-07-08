@@ -8,6 +8,21 @@ describe('Service: locator', function(){
 	var locator;
 	var testMarkers = [	{ "latitude": 38.7932, "longitude": -77.5366 },
 						{ "latitude": 39.76, "longitude": -98.5 }];
+	var excludeUndefinedMock = function(input){
+		var output = [];
+		for (var i = 0; i < input.length; i++){
+			if(input[i] !== undefined){
+				output.push(input[i]);
+			}
+		}
+		return output;
+	};
+
+	beforeEach(function(){
+		module(function($provide){
+			$provide.value('excludeUndefinedFilter', excludeUndefinedMock);
+		});
+	});
 
 	beforeEach(inject(function(_$http_,_$httpBackend_,_locator_){
 		$http = _$http_;
@@ -22,12 +37,14 @@ describe('Service: locator', function(){
 			.respond(404, '404 page not found');
 	}));
 
-	it('returns an object with locate, getMarkers, setUserLocation and setWebLocation',function(){
+	it('returns an object with locate, and getter setter functions',function(){
 
 		expect(locator.locate).toBeDefined();
 		expect(locator.getMarkers).toBeDefined();
 		expect(locator.setUserLocation).toBeDefined();
 		expect(locator.setWebLocation).toBeDefined();
+		expect(locator.getRecalledHost).toBeDefined();
+		expect(locator.setRecalledHost).toBeDefined();
 	});
 
 	it('sends correct http requests',function(){
@@ -64,9 +81,10 @@ describe('Service: locator', function(){
 		expect(theError).toBeDefined();
 	});
 
-	it('initially contains no markers',function(){
+	it('initially contains no markers and no recalled host',function(){
 
 		expect(locator.getMarkers()).toEqual([]);
+		expect(locator.getRecalledHost()).toBe("");
 	});
 
 	it('can set and get the userLocation',function(){
@@ -98,5 +116,11 @@ describe('Service: locator', function(){
 		expect(locator.getMarkers()[1].id).toBe("web");
 		expect(locator.getMarkers()[1].latitude).toBe(39.76);
 		expect(locator.getMarkers()[1].longitude).toBe(-98.5);
+	});
+
+	it('can set and get the recalledHost',function(){
+		locator.setRecalledHost("google.com");
+
+		expect(locator.getRecalledHost()).toBe("google.com");
 	});
 });

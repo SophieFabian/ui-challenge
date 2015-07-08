@@ -3,16 +3,13 @@
 describe('Controller: WebLocationController', function(){
 	beforeEach(module('GeoLocationApp'));
 
-	var $http;
 	var $scope;
-	var $controller;
-	var controller;
 	var locatorMock;
+	var webHistoryMock;
 
-	beforeEach(inject(function(_$controller_, _$http_, $q){
-		$controller = _$controller_;
-		$http = _$http_;
-		$scope = {};
+	beforeEach(inject(function($rootScope, $controller, $http, $q){
+		$scope = $rootScope;
+		$scope.recalledHost = "";
 		locatorMock = {
 			locate: function(host){
 				var deferred = $q.defer();
@@ -25,9 +22,13 @@ describe('Controller: WebLocationController', function(){
 					});
 				return deferred.promise;
 			},
-			setWebLocation: function(location){ return; }
-		}
-		controller = $controller('WebLocationController', { $scope: $scope, locator: locatorMock });
+			setWebLocation: function(location){ return; },
+			getRecalledHost: function(){ return $scope.recalledHost; }
+		};
+		webHistoryMock = {
+			addTo: function(){ return; }
+		};
+		$controller('WebLocationController', { $scope: $scope, locator: locatorMock, webHistory: webHistoryMock });
 	}));
 
 	describe('$scope initial state', function(){
@@ -35,6 +36,7 @@ describe('Controller: WebLocationController', function(){
 
 			expect($scope.locationError).toBe("");
 			expect($scope.locating).toBeFalsy();
+			expect($scope.host).toBe(locatorMock.getRecalledHost());
 			expect($scope.webLocation).toBeUndefined();
 		});
 	});
@@ -47,6 +49,8 @@ describe('Controller: WebLocationController', function(){
 			$scope.host = 'www.invalid';
 			expect($scope.validate()).toBeFalsy();
 			$scope.host = 'valid.com';
+			expect($scope.validate()).toBeTruthy();
+			$scope.host = 'v-a-l-i-d.com';
 			expect($scope.validate()).toBeTruthy();
 			$scope.host = 'www.valid.com';
 			expect($scope.validate()).toBeTruthy();
@@ -74,13 +78,14 @@ describe('Controller: WebLocationController', function(){
 	});
 
 	describe('$scope.getWebLocation', function(){
-		var $httpBackend,locator;
+		var $httpBackend;
 		var googleLocation = {
 				"ip":"2607:f8b0:4006:80e::200e",
 				"country_code":"US",
 				"country_name":"United States",
 				"latitude":39.76,
-				"longitude":-98.5
+				"longitude":-98.5,
+				"host": "google.com"
 		};
 
 		beforeEach(inject(function($injector){
@@ -175,6 +180,41 @@ describe('Controller: WebLocationController', function(){
 			$scope.getWebLocation();
 			$httpBackend.flush();
 			expect(locatorMock.setWebLocation).toHaveBeenCalledWith(undefined);
+		});
+
+		it('adds the webLocation to the history if the website exists', function(){
+			$scope.host = 'google.com';
+			spyOn(webHistoryMock, 'addTo').and.callThrough();
+
+			$scope.getWebLocation();
+			$httpBackend.flush();
+			expect(webHistoryMock.addTo).toHaveBeenCalledWith(googleLocation);
+		});
+
+		it('does not add the webLocation to the history if the website does not exist', function(){
+			$scope.host = 'le.com';
+			spyOn(webHistoryMock, 'addTo').and.callThrough();
+
+			$scope.getWebLocation();
+			$httpBackend.flush();
+			expect(webHistoryMock.addTo).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('$scope.$watch', function(){
+		it('updates the host if it is being recalled from history', function(){
+			$scope.recalledHost = 'google.com';
+
+			$scope.$digest();
+			expect($scope.host).toBe('google.com');
+		});
+
+		it('does not update the host if the recalled url did not change', function(){
+			$scope.host = 'google.com';
+			$scope.recalledHost = '';
+
+			$scope.$digest();
+			expect($scope.host).toBe('google.com');
 		});
 	});
 });

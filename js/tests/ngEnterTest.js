@@ -5,19 +5,14 @@ describe('Directive: ngEnter', function () {
 
 	var element, $rootScope;
 
-	beforeEach(inject(function(_$rootScope_){
+	beforeEach(inject(function(_$rootScope_, $compile){
 		$rootScope = _$rootScope_;
 		$rootScope.mockFunction = function(){};
-		compileDirective();
-	}));
 
-	function compileDirective(){
 		element = angular.element('<input type="text" ng-enter="mockFunction()" />');
-		inject(function($compile){
-			element = $compile(element)($rootScope);
-		});
-		$rootScope.$apply();
-	}
+		element = $compile(element)($rootScope);
+		$rootScope.$digest();
+	}));
 
 	it('calls the function on pressing enter', function(){
 		spyOn($rootScope,'mockFunction');

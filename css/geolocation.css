@@ -1,57 +1,17 @@
+/*
+ * General styles
+ */
+
 *{
 	text-align: center;
 }
 
-#title{
-	font-size: 4.0rem;
+.ng-cloak {
+	display:none;
 }
 
-table > caption{
-	text-align: center;
-	font-size: 2.5rem;
-	font-weight: bold;
-	margin-bottom: 8px;
-}
-
-table > tbody > tr > td.field_name{
-	text-align: left;
-	vertical-align: middle;
-	padding-left: 5%;
-}
-
-table > tbody > tr > td.location_value{
-	vertical-align: middle;
-	color: red;
-}
-
-table.empty .help{
-	visibility: hidden;
-}
-
-button{
-	width: 25%;
-}
-
-button.btn.load{
-	background: #337ab7 url("../img/ajax-loader.gif") center;
-	background-size: 110% 160%;
-}
-
-label[for='host']{
-	color: #777;
-	font-size: 2.5rem;
-}
-
-input#host{
-	padding-top: 8px;
-	width: 25%;
-}
-
-input#host:focus{
-	border-color: #66afe9;
-	outline: 0;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+.whiteShadow{
+	text-shadow: 1px 1px #FFF;
 }
 
 span.error{
@@ -59,9 +19,12 @@ span.error{
 	font-style: italic;
 }
 
-.angular-google-map-container{
-	min-height: 400px;
-	border-radius: 6px;
+/*
+ * Header / footer
+ */
+
+#title{
+	font-size: 4.0rem;
 }
 
 .jumbotron{
@@ -105,9 +68,145 @@ footer.jumbotron{
 	margin: 30px 0 0;
 }
 
-.whiteShadow{
-	text-shadow: 1px 1px #FFF;
+/*
+ * User and web locations
+ */
+
+table > caption{
+	text-align: center;
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin-bottom: 8px;
 }
+
+table > tbody > tr > td.field_name{
+	text-align: left;
+	vertical-align: middle;
+	padding-left: 5%;
+}
+
+table > tbody > tr > td.location_value{
+	vertical-align: middle;
+	color: red;
+}
+
+table.empty .help{
+	visibility: hidden;
+}
+
+button{
+	width: 25%;
+}
+
+button.btn.load{
+	background: #337ab7 url("../img/ajax-loader.gif") center;
+	background-size: 110% 160%;
+}
+
+button.peel{
+	box-shadow:0px 1px 3px rgba(20, 20, 20, 0.4);
+	position:relative;
+}
+button.peel:before, button.peel:after{
+	content: '';
+	z-index: -1;
+	position: absolute;
+	left: 20px;
+	bottom: 10px;
+	width: 50%;
+	max-width: 300px;
+	height: 25%;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+	transform: skew(-15deg) rotate(-6deg);
+}
+button.peel:after{
+	left: auto;
+	right: 20px;
+	transform: skew(15deg) rotate(6deg); 
+}
+
+label[for='host']{
+	color: #777;
+	font-size: 2.5rem;
+}
+
+input#host{
+	padding-top: 8px;
+	width: 25%;
+}
+
+input#host:focus{
+	border-color: #66afe9;
+	outline: 0;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+}
+
+.angular-google-map-container{
+	min-height: 400px;
+	border-radius: 6px;
+}
+
+/*
+ * History sidebar and overlay
+ */
+
+#WebHistoryContainer{
+	padding: 5% 0 5% 5%;
+	width: 40%;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: -38%;
+	background-color: FloralWhite;
+	box-shadow: 0 0 10px 5px FloralWhite;
+	z-index: 2;
+	transition: left 0.6s;
+}
+
+#WebHistoryContainer.show{
+	left: 0;
+}
+
+#WebHistoryContainer div.sideBar{
+	height: 30px;
+	transform: rotate(90deg);
+	transform-origin: right top 0;
+	position: absolute;
+	top: 45%;
+	right: -4px;
+	background: transparent;
+	font-weight: bold;
+	color: #777;
+}
+
+#WebHistoryContainer ol{
+	max-height: 100%;
+	max-width: 95%;
+	overflow: auto;
+}
+
+.overlay{
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 100%;
+	left: 0;
+	background-color: black;
+	opacity: 0;
+	z-index: 1;
+	transition: bottom 0s 0.6s, opacity 0.6s;
+}
+
+.overlay.show{
+	bottom: 0;
+	opacity: 0.5;
+	transition: bottom 0s, opacity 0.6s;
+}
+
+/*
+ * Styles for different media types
+ */
 
 @media (min-width: 768px){
 	*{
@@ -126,5 +225,31 @@ footer.jumbotron{
 	
 	menu{
 		-webkit-padding-start: 0px;
+	}
+}
+
+@media (max-width: 640px){
+	#WebHistoryContainer{
+		padding: 5%;
+		left: -37%;
+		box-shadow: 0 0 10px 0px FloralWhite;
+	}
+	
+	history-info{
+		font-size: 1.0rem;
+	}
+}
+
+@media (max-width: 440px){
+	#title{
+		font-size: 3.0rem;
+	}
+	
+	table > caption{
+		font-size: 2.0rem;
+	}
+	
+	#WebHistoryContainer{
+		left: -36%;
 	}
 }

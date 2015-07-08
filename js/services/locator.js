@@ -1,21 +1,10 @@
 'use strict';
 
-app.factory('locator', ['$http', "$q", function($http, $q){
+app.factory('locator', ['$http', '$q', '$filter', function($http, $q, $filter){
 
-	var locations = {};
-	var markers = [];
-
-	var updateMarkers = function(){
-		if(locations.user === undefined && locations.web === undefined){
-			markers = [];
-		}else if(locations.user !== undefined && locations.web === undefined){
-			markers = [locations.user];
-		}else if(locations.user === undefined && locations.web !== undefined){
-			markers = [locations.web];
-		}else{
-			markers = [locations.user,locations.web];
-		}
-	};
+	var recalledHost = "";
+	var innerMarkers = [undefined,undefined];
+	var outerMarkers = [];
 
 	return {
 		locate: function(host){
@@ -30,14 +19,13 @@ app.factory('locator', ['$http', "$q", function($http, $q){
 					return deferred.promise;
 		},
 		getMarkers: function(){
-			return markers;
+			return outerMarkers;
 		},
 		setUserLocation: function(location){
-			locations.user = location;
-			if (locations.user !== undefined){
-				locations.user.id = "user";
-				locations.user.showWindow = false;
-				locations.user.options = {
+			if (location !== undefined){
+				location.id = "user";
+				location.showWindow = false;
+				location.options = {
 					icon:"http://maps.google.com/mapfiles/ms/micons/red-pushpin.png",
 					labelContent: "User Location",
 					labelAnchor: "62 0",
@@ -45,14 +33,14 @@ app.factory('locator', ['$http', "$q", function($http, $q){
 					windowMessage: "Yes, this is where YOU are - at"
 				};
 			}
-			updateMarkers();
+			innerMarkers[0] = location;
+			outerMarkers = $filter("excludeUndefined")(innerMarkers);
 		},
 		setWebLocation: function(location){
-			locations.web = location;
-			if (locations.web !== undefined){
-				locations.web.id = "web";
-				locations.web.showWindow = false;
-				locations.web.options = {
+			if (location !== undefined){
+				location.id = "web";
+				location.showWindow = false;
+				location.options = {
 					icon:"http://maps.google.com/mapfiles/ms/micons/blue-pushpin.png",
 					labelContent: "Web Location",
 					labelAnchor: "61 0",
@@ -60,7 +48,14 @@ app.factory('locator', ['$http', "$q", function($http, $q){
 					windowMessage: "Yes, this is where your WEBSITE is - at"
 				};
 			}
-			updateMarkers();
+			innerMarkers[1] = location;
+			outerMarkers = $filter("excludeUndefined")(innerMarkers);
+		},
+		getRecalledHost: function(){
+			return recalledHost;
+		},
+		setRecalledHost: function(oldHost){
+			recalledHost = oldHost;
 		}
-	}
+	};
 }]);

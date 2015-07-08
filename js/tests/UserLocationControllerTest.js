@@ -3,10 +3,7 @@
 describe('Controller: UserLocationController', function(){
 	beforeEach(module('GeoLocationApp'));
 
-	var $http;
 	var $scope;
-	var $controller;
-	var controller;
 	var locatorMock;
 	var initialUserLocationData = {
 		query: "0.0.0.0",
@@ -18,9 +15,7 @@ describe('Controller: UserLocationController', function(){
 		lon: "",
 	};
 
-	beforeEach(inject(function(_$controller_, _$http_, $q){
-		$controller = _$controller_;
-		$http = _$http_;
+	beforeEach(inject(function($controller, $http, $q){
 		$scope = {};
 		locatorMock = {
 			locate: function(host){
@@ -36,7 +31,7 @@ describe('Controller: UserLocationController', function(){
 			},
 			setUserLocation: function(location){ return; }
 		};
-		controller = $controller('UserLocationController', { $scope: $scope, locator: locatorMock });
+		$controller('UserLocationController', { $scope: $scope, locator: locatorMock });
 	}));
 
 	describe('$scope initial state', function(){
@@ -63,7 +58,7 @@ describe('Controller: UserLocationController', function(){
 	});
 
 	describe('$scope.getMyLocation', function(){
-		var $httpBackend,locator,requestHandler;
+		var $httpBackend,requestHandler;
 		var userLocation = {
 				"city":"Manassas",
 				"country":"United States",
@@ -92,7 +87,7 @@ describe('Controller: UserLocationController', function(){
 			spyOn(locatorMock, 'locate').and.callThrough();
 
 			$scope.getMyLocation();
-			expect(locatorMock.locate).not.toHaveBeenCalled()
+			expect(locatorMock.locate).not.toHaveBeenCalled();
 		});
 
 		it('sets the "locating" variable to true during the http request', function(){

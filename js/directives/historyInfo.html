@@ -1,0 +1,6 @@
+<ol>
+	<li ng-repeat="location in info">
+		<a href="javascript:void(0);" ng-click="recall(location);">{{ location.host }}</a>
+	</li>
+</ol>
+<div ng-if="info.length == 0">There is no history to show.</div>

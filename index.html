@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="css/geolocation.css">
 
 	</head>
-	<body ng-app="GeoLocationApp">
+	<body class="ng-cloak" ng-app="GeoLocationApp" ng-strict-di>
 
 		<header class="jumbotron">
 			<h1 id="title">GeoLocation Test</h1>
@@ -20,8 +20,8 @@
 			<section id="geoLocationContainer" class="row" ng-controller="UserLocationController">
 				<location-info info="userLocation" class="table-responsive" ng-cloak></location-info>
 				<menu>
-					<button ng-click="getMyLocation()" ng-class="{ load:locating }" id="btnMyLocation" class="btn btn-lg btn-primary">{{ locating ? "Loading.." : "My location" }}</button>
-					<button ng-click="resetLocationDetails()" id="btnResetLocation" class="btn btn-lg btn-primary">Reset location</button>
+					<button ng-click="getMyLocation()" ng-class="{ load:locating }" id="btnMyLocation" class="btn btn-lg btn-primary peel">{{ locating ? "Loading.." : "My location" }}</button>
+					<button ng-click="resetLocationDetails()" id="btnResetLocation" class="btn btn-lg btn-primary peel">Reset location</button>
 				</menu>
 				<span class="error">{{ locationError }}</span>
 			</section>
@@ -32,7 +32,7 @@
 				<label for="host" class="">Website</label>
 				<menu>
 					<input type="text" id="host" class="input-lg" ng-enter="getWebLocation()" placeholder="www.example.com" ng-model="host" required />
-					<button ng-click="getWebLocation()" ng-class="{ load:locating }" id="btnLocate" class="btn btn-lg btn-primary">{{ locating ? "Loading.." : "Locate" }}</button>
+					<button ng-click="getWebLocation()" ng-class="{ load:locating }" id="btnLocate" class="btn btn-lg btn-primary peel">{{ locating ? "Loading.." : "Locate" }}</button>
 				</menu>
 				<span class="error">{{ locationError }}</span>
 			</section>
@@ -49,9 +49,17 @@
 
 		</main>
 
+		<aside id="WebHistoryContainer" ng-controller="WebHistoryController" ng-class="{ show:show }">
+			<div>{{ showOverlay }}</div>
+			<div class="sideBar whiteShadow" ng-click="toggle();">{{ show ? "Hide" : "Show" }} History</div>
+			<history-info info="history" recall="recall"></history-info>
+		</aside>
+
 		<footer class="jumbotron">
 			<span>&copy; Attila Pix 2015</span>
 		</footer>
+
+		<div class="overlay" ng-controller="OverlayController" ng-class="{ show:show }" ng-click="hide();"></div>
 
 		<!-- Libraries -->
 		<script src="js/libs/lodash.min.js"></script>
@@ -66,14 +74,21 @@
 		<!-- Controllers -->
 		<script src="js/controllers/UserLocationController.js"></script>
 		<script src="js/controllers/WebLocationController.js"></script>
+		<script src="js/controllers/WebHistoryController.js"></script>
+		<script src="js/controllers/OverlayController.js"></script>
 		<script src="js/controllers/MapController.js"></script>
-
-		<!-- Services -->
-		<script src="js/services/locator.js"></script>
 
 		<!-- Directives -->
 		<script src="js/directives/locationInfo.js"></script>
+		<script src="js/directives/historyInfo.js"></script>
 		<script src="js/directives/ngEnter.js"></script>
+
+		<!-- Services -->
+		<script src="js/services/locator.js"></script>
+		<script src="js/services/webHistory.js"></script>
+
+		<!-- Filters -->
+		<script src="js/filters/excludeUndefined.js"></script>
 
 	</body>
 </html>
